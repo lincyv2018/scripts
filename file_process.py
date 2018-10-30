@@ -5,10 +5,11 @@ import glob
 import datetime
 import smtplib
 from shutil import copy
+from shutil import copyfile
 
 #from shutil import copyfile
-sucess_log_path = "/"
-fail_log_path = "/"
+sucess_log_path = "/mnt/highrestos3/Logs/Success/SnowBall/"
+fail_log_path = "/mnt/highrestos3/Logs/Failed/SnowBall/"
 
 logname = sys.argv[1] #"photos003_1003846-003_1003870.csv"
 destnametion =  sys.argv[2]#"./photos003_1003846-003_1003870"
@@ -17,15 +18,17 @@ FROM = "noreply@alamy.com"
 TO = ["itsdprojectalerts@alamy.com"] # must be a list
 SUBJECT = "HiRes Snowball Job Status for "+logname
 TEXT = "HighRes Snowball getfile process completed"+str(datetime.datetime.now())
-
+starttime = str(datetime.datetime.now()
 if sys.argv[1] == " " or  sys.argv[2] == " ":
     print "argument are missing"
     quit()
 comfile = logname.split(".")
 archive_name = comfile[0]+".tar.gz"
-sucess_log = open(logname+"-sucess.log", "a+")
-fail_log = open(logname+"-fail.log", "a+")
-process_log = open(logname+".log", "a+")
+sucess_log = open(logname+"-sucess.log", "wb")
+fail_log = open(logname+"-fail.log", "wb")
+process_log = open(logname+".log", "wb")
+slogname = logname+"-sucess.log"
+flogname = logname+"-fail.log"
 def okay():
     print("Done.\n")
 process_log.write("process started"+str(datetime.datetime.now()))
@@ -59,10 +62,10 @@ process_log.write("Process ended"+str(datetime.datetime.now()))
 sucess_log.close()
 fail_log.close()
 process_log.close()
-copy(logname+"-sucess.log",sucess_log_path)
-copy(logname+"-fail.log",fail_log_path)
+copy(slogname,sucess_log_path)
+copy(flogname,fail_log_path)
 ##### email process
-TEXT = "HighRes Snowball getfile process completed"+str(datetime.datetime.now())
+TEXT = "HighRes Snowball getfile process completed on : "+str(datetime.datetime.now())
 message = """\
 From: %s
 To: %s
